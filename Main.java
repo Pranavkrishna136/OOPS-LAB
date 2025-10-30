@@ -1,59 +1,55 @@
 import java.util.*;
-class InvalidATMPinException extends Exception {
-    public InvalidATMPinException(String message) {
-        super(message);
-    }
-}
+class WordThread extends Thread {
+    String text;
 
-class NoCashException extends Exception {
-    public NoCashException(String message) {
-        super(message);
-    }
-}
-
-class Account {
-    String name;
-    double balance;
-    int atmPin;
-
-    public Account(String name, double balance, int atmPin) {
-        this.name = name;
-        this.balance = balance;
-        this.atmPin = atmPin;
+    WordThread(String text) {
+        this.text = text;
     }
 
-    public void checkPin(int enteredPin) throws InvalidATMPinException {
-        if (enteredPin != atmPin) {
-            throw new InvalidATMPinException("Invalid ATM Pin! Please try again.");
-        } else {
-            System.out.println("Pin verified successfully!");
+    public void run() {
+        String[] words = text.split(" ");
+        try {
+            for (String word : words) {
+                System.out.println("Word: " + word);
+                Thread.sleep(2000); // 2-second delay
+            }
+        } catch (Exception e) {
+            System.out.println(e);
         }
     }
+}
 
-    public void withdraw(double amount) throws NoCashException {
-        if (amount > balance) {
-            throw new NoCashException("Insufficient balance in your account!");
-        } else {
-            balance -= amount;
-            System.out.println("Withdrawal successful! Remaining Balance: ₹" + balance);
+class VowelThread extends Thread {
+    String text;
+
+    VowelThread(String text) {
+        this.text = text;
+    }
+
+    public void run() {
+        try {
+            for (int i = 0; i < text.length(); i++) {
+                char ch = text.charAt(i);
+                if (ch == 'a' || ch == 'e' || ch == 'i' || ch == 'o' || ch == 'u' ||
+                    ch == 'A' || ch == 'E' || ch == 'I' || ch == 'O' || ch == 'U') {
+                    System.out.println("Vowel: " + ch);
+                    Thread.sleep(2000); // 2-second delay
+                }
+            }
+        } catch (Exception e) {
+            System.out.println(e);
         }
     }
 }
 
 public class Main {
     public static void main(String[] args) {
-        Account acc = new Account("Pranav", 2000.0, 1234);
+        String paragraph = "Java supports multithreading";
 
-        try {
-            acc.checkPin(1234);
-            acc.withdraw(1500);
-            acc.withdraw(1000);
-        } 
-        catch (InvalidATMPinException e) {
-            System.out.println("Error: " + e.getMessage());
-        } 
-        catch (NoCashException e) {
-            System.out.println("Error: " + e.getMessage());
-        }
+        WordThread w = new WordThread(paragraph);
+        VowelThread v = new VowelThread(paragraph);
+
+        w.start();
+        v.start();
     }
 }
